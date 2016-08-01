@@ -29,13 +29,14 @@ namespace Simple.OData.Client.Tests
             Assert.Equal("Chai", product.ProductName);
         }
 
+        private string productName = "Chai";
+
         [Fact]
-        public async Task SingleConditionWithMemberVariable()
+        public async Task SingleConditionWithMemberrVariable()
         {
-            var productName = "Chai";
             var product = await _client
                 .For<Product>()
-                .Filter(x => x.ProductName == productName)
+                .Filter(x => x.ProductName == this.productName)
                 .FindEntryAsync();
             var sameProduct = await _client
                 .For<Product>()
@@ -575,6 +576,27 @@ namespace Simple.OData.Client.Tests
                 .For<Transport>()
                 .As<Ship>()
                 .Filter(x => x.ShipName == "Titanic")
+                .FindEntryAsync();
+            Assert.Equal("Titanic", transport.ShipName);
+        }
+
+        [Fact]
+        public async Task BaseClassEntryByKey()
+        {
+            var transport = await _client
+                .For<Transport>()
+                .Key(1)
+                .FindEntryAsync();
+            Assert.Equal(1, transport.TransportID);
+        }
+
+        [Fact]
+        public async Task DerivedClassEntryByKey()
+        {
+            var transport = await _client
+                .For<Transport>()
+                .As<Ship>()
+                .Key(1)
                 .FindEntryAsync();
             Assert.Equal("Titanic", transport.ShipName);
         }
